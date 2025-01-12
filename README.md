@@ -1,3 +1,23 @@
-# US_census_income_task
-US census income task: classification problem
+# US Census Personal Income Prediction 
+
+## Dataset 
+
+
+## Objectives
+
+
+
+## Main Insights
+
+
+## Model Training 
+
+
+## Model Selection 
+
+
+## Model Exlpainability 
+
+
+## Conclusions 
 
