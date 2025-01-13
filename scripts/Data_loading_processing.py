@@ -15,6 +15,16 @@ column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL'
 
 cols_to_remove=['AGI', 'FEDTAX','PEARNVAL','PTOTVAL','TAXINC' ]
 
+race_mapping_dict = {
+    ' White': 'White',
+    ' Black': 'non_White', 
+    ' Asian or Pacific Islander': 'non_White',
+    ' Other': 'non_White',
+    ' Amer Indian Aleut or Eskimo': 'non_White'
+}
+
+
+
 
 def load_data(file_path):
     return pd.read_csv(file_path, header=None)
@@ -49,13 +59,27 @@ def drop_duplicates_and_conflicting_samples(df):
     
     return df
 
-def drop_children_from_df(df, age_col_name):
+def drop_children_from_df(df, age_col_name, age_col_new_name):
     df=df[df[age_col_name] > 14] 
+    df[age_col_new_name]=df[age_col_name]
+    df.drop(age_col_name, axis=1, inplace=True)
     return df 
 
-def binarise_sex(df, sex_col_name):
-    df['Male'] = np.where(df[sex_col_name] == ' Male', 1, 0)
+def binarise_sex(df, sex_col_name, sex_new_col_name):
+    df[sex_new_col_name] = np.where(df[sex_col_name] == ' Male', 1, 0)
     df.drop(sex_col_name, axis=1, inplace=True)
+    return df
+
+def apply_race_mapping_and_drop_race_col(df, race_col_name, race_new_col_name, race_mapping):
+    # apply new mapping of keywords using race_mapping dict
+    df['race_mapped'] = df[race_col_name].replace(race_mapping)
+    # make 1 where == White, and Zero for other 
+    df[race_new_col_name] = np.where(df['race_mapped'] == 'White', 1, 0)
+
+    # drop original column and temp col, as not needed 
+    df.drop(race_col_name, axis=1, inplace=True)
+    df.drop('race_mapped', axis=1, inplace=True)
+
     return df
 
 
@@ -63,8 +87,9 @@ def binarise_sex(df, sex_col_name):
 train_data = load_data(train_data_path)
 train_data=add_column_names_convert_target(train_data,column_names, cols_to_remove)
 train_data=drop_duplicates_and_conflicting_samples(train_data)
-train_data=drop_children_from_df(train_data, 'AAGE')
-train_data=binarise_sex(train_data, 'ASEX')
+train_data=drop_children_from_df(train_data, 'AAGE', 'Age')
+train_data=binarise_sex(train_data, 'ASEX', 'Male')
+train_data=apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_white', race_mapping_dict)
 
 
 print(train_data.head(3))
