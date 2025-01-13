@@ -13,17 +13,11 @@ column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL'
             'MIGMTR1','MIGMTR2','MIGMTR4','MIGSAME','MIGSUN','NOEMP','PARENT','PEARNVAL','PEFNTVTY',
             'PEMNTVTY','PENATVTY','PRCITSHP','PTOTVAL','SEOTR','TAXINC','VETQVA','VETYN','WKSWORK', 'YEAROFSUR']
 
-cols_to_remove=['AGI', 'FEDTAX','PEARNVAL','PTOTVAL','TAXINC', ]
-
-
-cols_to_drop=['MARSUPWT']
-
+cols_to_remove=['AGI', 'FEDTAX','PEARNVAL','PTOTVAL','TAXINC' ]
 
 
 def load_data(file_path):
     return pd.read_csv(file_path, header=None)
-
-
 
 
 
@@ -43,7 +37,20 @@ def add_column_names_convert_target(df, col_names, cols_to_remove):
 
     return df
 
-def drop_not_needed_cols(df, cols_to_drop)
+def drop_duplicates_and_conflicting_samples(df):
+    df=df.drop('MARSUPWT', axis=1)
+    df=df.drop_duplicates(keep='first')
+    
+    # Identify conflicting instances
+    conflicting_instances = df[df.duplicated(subset=df.columns.difference(['TARGET_bin']), keep=False)]
+    
+    # drop all conflicting instances, not enough information to decide which one to keep
+    df.drop_duplicates(subset=df.columns.difference(['TARGET_bin']), keep='first', inplace=True)
+    
+    return df
+
+
+
 
 
 
@@ -51,5 +58,7 @@ def drop_not_needed_cols(df, cols_to_drop)
 
 train_data = load_data(train_data_path)
 train_data=add_column_names_convert_target(train_data,column_names, cols_to_remove)
+train_data=drop_duplicates_and_conflicting_samples(train_data)
 
 print(train_data.head(3))
+print(len(train_data))
