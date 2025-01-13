@@ -7,6 +7,9 @@ from sklearn.preprocessing import OneHotEncoder
 train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn.csv'
 train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn_ready_for_modelling.csv'
 
+train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test.csv'
+train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test_ready_for_modelling.csv'
+
 
 column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL','AMARITL',
 
@@ -59,12 +62,11 @@ employment_mapping = {
 cols_to_drop = ['AREORGN', 'ACLSWKR', 'ADTIND', 'ADTOCC', 'AHRSPAY', 'AMJIND', 'AMJOCC', 'AWKSTAT',
        'CAPGAIN', 'CAPLOSS', 'DIVVAL', 'FILESTAT', 'HHDFMX', 'HHDREL',
        'MIGMTR1', 'MIGMTR2', 'MIGMTR4', 'MIGSAME', 'MIGSUN', 'NOEMP',
-       'PRCITSHP', 'SEOTR', 'VETYN', 'WKSWORK', 'YEAROFSUR',]
+       'PRCITSHP', 'SEOTR', 'VETYN', 'WKSWORK', 'YEAROFSUR','emp_mapped']
 
 
 feature_cols=['Age', 'Male', 'Married', 'Race_white', 'Education_Grade-school',
-       'Education_Graduate', 'Education_HS-grad', 'Education_HS-nongrad',
-       'emp_mapped', 'Employment_Government',
+       'Education_Graduate', 'Education_HS-grad', 'Education_HS-nongrad', 'Employment_Government',
        'Employment_Not in paid employment', 'Employment_Private',
        'Employment_Self-employed', 'Parents_birth', 'TARGET_bin']
 
