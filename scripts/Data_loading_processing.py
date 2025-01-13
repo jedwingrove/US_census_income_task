@@ -150,7 +150,17 @@ def apply_employment_mapping_and_drop_employment_col(df, emp_col_name, emp_mappi
     # apply new mapping of keywords using race_mapping dict
     df['emp_mapped'] = df[emp_col_name].replace(emp_mapping)
     tmp_var='emp_mapped'    
-    
+    not_employed_query=df.query("emp_mapped=='Not in paid employment' & TARGET_bin==1")
+    index=not_employed_query.index
+    for i in index:
+        if not_employed_query.loc[i,'NOEMP'] > 0 or not_employed_query.loc[i,'WKSWORK'] > 0:
+            df.loc[i,tmp_var]='Private'
+        elif not_employed_query.loc[i,'AWKSTAT']==' Children or Armed Forces':
+            df.loc[i,tmp_var]='Government'
+        else:
+            df.drop(i, inplace=True) 
+
+
     #instantiate OneHotEncoder
     encoder = OneHotEncoder(sparse=False) 
     # fit and transform the column
@@ -170,10 +180,22 @@ def apply_employment_mapping_and_drop_employment_col(df, emp_col_name, emp_mappi
 
     # drop the tmp_var column
     df=merged_df.copy()
-    df.drop(tmp_var, axis=1, inplace=True)
-    df.drop(emp_col_name, axis=1, inplace=True)
+    # df.drop(tmp_var, axis=1, inplace=True)
+    #df.drop(emp_col_name, axis=1, inplace=True)
     return df 
 
+
+def employment_cleaning(df):
+    not_employed_query=df.query("emp_mapped=='Not in paid employment' & TARGET_bin==1")
+    index=not_employed_query.index
+    for i in index:
+        if not_employed_query.loc[i,'NOEMP'] > 0 or not_employed_query.loc[i,'WKSWORK'] > 0:
+            df.loc[i,'ACLSWKR_groups']='Private'
+        elif not_employed_query.loc[i,'AWKSTAT']==' Children or Armed Forces':
+            df.loc[i,'ACLSWKR_groups']='Government'
+        else:
+            df.drop(i, inplace=True) 
+    
 
 
 def parental_country_of_birth(df, father_col_name, mother_col_name, new_col_name):
@@ -228,18 +250,24 @@ train_data = drop_duplicates_and_conflicting_samples(train_data)
 
 train_data = drop_children_from_df(train_data, 'AAGE', 'Age')
 
-#binarise functions
+# binarise functions
 train_data = binarise_sex(train_data, 'ASEX', 'Male')
 train_data = binarise_marriage(train_data, 'AMARITL', 'Married')
 
+# mapping functions for categorical data
 train_data = apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_white', race_mapping_dict)
 train_data = apply_education_mapping_and_drop_education_col(train_data, 'AHGA', education_mapping)
 train_data = apply_employment_mapping_and_drop_employment_col(train_data, 'ACLSWKR', employment_mapping)
 
 
+
 train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Parents_birth')
+
+
 
 
 print(train_data.head(3))
 print(len(train_data))
+print(train_data.query('TARGET_bin==1')['emp_mapped'].value_counts())
+print(train_data.query('TARGET_bin==0')['emp_mapped'].value_counts())
 print(train_data.columns)
