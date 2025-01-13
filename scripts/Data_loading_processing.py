@@ -66,7 +66,7 @@ feature_cols=['Age', 'Male', 'Married', 'Race_white', 'Education_Grade-school',
        'Education_Graduate', 'Education_HS-grad', 'Education_HS-nongrad',
        'emp_mapped', 'Employment_Government',
        'Employment_Not in paid employment', 'Employment_Private',
-       'Employment_Self-employed', 'Parents_birth', 'emp_mapped']
+       'Employment_Self-employed', 'Parents_birth', 'TARGET_bin']
 
 
 # functions
