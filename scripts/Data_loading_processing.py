@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
 
 train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn.csv'
+train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn_ready_for_modelling.csv'
+
 
 column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL','AMARITL',
 
@@ -265,6 +267,10 @@ def assign_X(df, feature_cols):
     X=df.drop(feature_cols, axis=1)
     return y
 
+def save_cleaned_data_to_csv(df, train_data_cleaned_path):
+    df.to_csv(train_data_cleaned_path)
+
+
 ############## Importing data #####################
 print('Importing and cleaning data for modelling')
 train_data = load_data(train_data_path)
@@ -286,10 +292,13 @@ train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Pare
 
 train_data, cols_to_drop = marking_cols_to_remove_not_in_universe(train_data, cols_to_drop)
 train_data = drop_cols(train_data, cols_to_drop)
+save_cleaned_data_to_csv(train_data, train_data_cleaned_path)
 
-y=assign_y(train_data, 'TARGET_bin')
-X=assign_X(train_data, feature_cols)
 
-print(X.columns, y.columns)
-print('Cleaning and processing finished')
+# y=assign_y(train_data, 'TARGET_bin')
+# X=assign_X(train_data, feature_cols)
+
+
+# print(X.columns, y.columns)
+print('Cleaning and processing finished, saved to',train_data_cleaned_path )
 
