@@ -34,7 +34,8 @@ Family and Household Information (Marital Status, Family Size, etc.)
 
 
 ## Main Insights
-
+From conducting EDA on the data, I have found a good number of features which look important in differentiating between high earners and low earners. 
+Sligtly older, middle aged, male, white, well educated, employed
 
 ## Model Training 
 
