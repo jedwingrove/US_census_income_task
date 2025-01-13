@@ -101,6 +101,11 @@ def binarise_sex(df, sex_col_name, sex_new_col_name):
     df.drop(sex_col_name, axis=1, inplace=True)
     return df
 
+def binarise_marriage(df, marriage_col_name, marriage_new_col_name):
+    df[marriage_new_col_name] = np.where(df[marriage_col_name] == ' Married-civilian spouse present', 1, 0)
+    df.drop(marriage_col_name, axis=1, inplace=True)
+    return df
+
 def apply_race_mapping_and_drop_race_col(df, race_col_name, race_new_col_name, race_mapping):
     # apply new mapping of keywords using race_mapping dict
     df['race_mapped'] = df[race_col_name].replace(race_mapping)
@@ -189,10 +194,6 @@ def parental_country_of_birth(df, father_col_name, mother_col_name, new_col_name
 
 
 
- 
-
-
-
 def no_utility_cols_to_drop(df, cols_to_drop):
     df.drop(cols_to_drop, axis=1, inplace=True)
     return df
@@ -224,11 +225,18 @@ def no_utility_cols_to_drop(df, cols_to_drop):
 train_data = load_data(train_data_path)
 train_data = add_column_names_convert_target(train_data,column_names, cols_to_remove)
 train_data = drop_duplicates_and_conflicting_samples(train_data)
+
 train_data = drop_children_from_df(train_data, 'AAGE', 'Age')
+
+#binarise functions
 train_data = binarise_sex(train_data, 'ASEX', 'Male')
+train_data = binarise_marriage(train_data, 'AMARITL', 'Married')
+
 train_data = apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_white', race_mapping_dict)
 train_data = apply_education_mapping_and_drop_education_col(train_data, 'AHGA', education_mapping)
 train_data = apply_employment_mapping_and_drop_employment_col(train_data, 'ACLSWKR', employment_mapping)
+
+
 train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Parents_birth')
 
 
