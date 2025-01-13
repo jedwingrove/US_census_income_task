@@ -54,7 +54,20 @@ employment_mapping = {
     ' Without pay': 'Not in paid employment'
 }
 
-cols_to_drop = ['AREORGN', ]
+cols_to_drop = ['AREORGN', 'ACLSWKR', 'ADTIND', 'ADTOCC', 'AHRSPAY', 'AMJIND', 'AMJOCC', 'AWKSTAT',
+       'CAPGAIN', 'CAPLOSS', 'DIVVAL', 'FILESTAT', 'HHDFMX', 'HHDREL',
+       'MIGMTR1', 'MIGMTR2', 'MIGMTR4', 'MIGSAME', 'MIGSUN', 'NOEMP',
+       'PRCITSHP', 'SEOTR', 'VETYN', 'WKSWORK', 'YEAROFSUR',]
+
+
+feature_cols=['Age', 'Male', 'Married', 'Race_white', 'Education_Grade-school',
+       'Education_Graduate', 'Education_HS-grad', 'Education_HS-nongrad',
+       'emp_mapped', 'Employment_Government',
+       'Employment_Not in paid employment', 'Employment_Private',
+       'Employment_Self-employed', 'Parents_birth', 'emp_mapped']
+
+
+# functions
 
 def load_data(file_path):
     return pd.read_csv(file_path, header=None)
@@ -220,30 +233,40 @@ def no_utility_cols_to_drop(df, cols_to_drop):
     df.drop(cols_to_drop, axis=1, inplace=True)
     return df
 
-# def marking_cols_to_remove_not_in_universe(df):
-#     for column in df.select_dtypes(include=['object']).columns:
-#     # Calculate the percentage of 'Not in universe' for the current column
-#     percentage = (df[column] == ' Not in universe').mean() * 100
-#     percentage_dict[column] = percentage
+def marking_cols_to_remove_not_in_universe(df, cols_to_drop):
+    percentage_dict={}
+    for column in df.select_dtypes(include=['object']).columns:
+    # Calculate the percentage of 'Not in universe' for the current column
+        percentage = (df[column] == ' Not in universe').mean() * 100
+        percentage_dict[column] = percentage
 
-#     # Sort the dictionary by percentages in descending order
-#     sorted_percentage_dict = dict(sorted(percentage_dict.items(), key=lambda item: item[1], reverse=True))
+    # Sort the dictionary by percentages in descending order
+    sorted_percentage_dict = dict(sorted(percentage_dict.items(), key=lambda item: item[1], reverse=True))
 
-#     # Print the columns and their percentages
-#     for column, percentage in sorted_percentage_dict.items():
-#         if percentage > 0:
-#             print(f"{column}: {percentage:.2f}%")
-
-#     # anything greater than %50 will be dropped
-#     for column, percentage in sorted_percentage_dict.items():
-#         if percentage > 50:
-#             df.drop(column, axis=1, inplace=True)
-#             print(column, 'dropped from analysis')
+    # anything greater than %50 will be dropped
+    for column, percentage in sorted_percentage_dict.items():
+        if percentage > 50:
+            #df.drop(column, axis=1, inplace=True)
+            cols_to_drop.append(column)
+            
+    return df, cols_to_drop
 
 
+def drop_cols(df, cols_to_drop):
+    df.drop(cols_to_drop, axis=1, inplace=True)
+    return df
 
 
+def assign_y(df, target_col):
+    y=df.drop(target_col, axis=1)
+    return y
 
+def assign_X(df, feature_cols):
+    X=df.drop(feature_cols, axis=1)
+    return y
+
+############## Importing data #####################
+print('Importing and cleaning data for modelling')
 train_data = load_data(train_data_path)
 train_data = add_column_names_convert_target(train_data,column_names, cols_to_remove)
 train_data = drop_duplicates_and_conflicting_samples(train_data)
@@ -259,15 +282,14 @@ train_data = apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_whi
 train_data = apply_education_mapping_and_drop_education_col(train_data, 'AHGA', education_mapping)
 train_data = apply_employment_mapping_and_drop_employment_col(train_data, 'ACLSWKR', employment_mapping)
 
-
-
 train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Parents_birth')
 
+train_data, cols_to_drop = marking_cols_to_remove_not_in_universe(train_data, cols_to_drop)
+train_data = drop_cols(train_data, cols_to_drop)
 
+y=assign_y(train_data, 'TARGET_bin')
+X=assign_X(train_data, feature_cols)
 
+print(X.columns, y.columns)
+print('Cleaning and processing finished')
 
-print(train_data.head(3))
-print(len(train_data))
-print(train_data.query('TARGET_bin==1')['emp_mapped'].value_counts())
-print(train_data.query('TARGET_bin==0')['emp_mapped'].value_counts())
-print(train_data.columns)
