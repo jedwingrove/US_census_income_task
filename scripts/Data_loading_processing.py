@@ -42,6 +42,17 @@ education_mapping = {
 ' Prof school degree (MD DDS DVM LLB JD)': 'Graduate'
  }
 
+employment_mapping = {
+    ' Private': 'Private',
+    ' Self-employed-not incorporated': 'Self-employed',
+    ' Self-employed-incorporated': 'Self-employed',
+    ' Local government': 'Government',
+    ' State government': 'Government',
+    ' Federal government': 'Government',
+    ' Not in universe': 'Not in paid employment',
+    ' Never worked' : 'Not in paid employment',
+    ' Without pay': 'Not in paid employment'
+}
 
 cols_to_drop = ['AREORGN', ]
 
@@ -130,6 +141,34 @@ def apply_education_mapping_and_drop_education_col(df, edu_col_name, edu_mapping
     df.drop(edu_col_name, axis=1, inplace=True)
     return df 
 
+def apply_employment_mapping_and_drop_employment_col(df, emp_col_name, emp_mapping):
+    # apply new mapping of keywords using race_mapping dict
+    df['emp_mapped'] = df[emp_col_name].replace(emp_mapping)
+    tmp_var='emp_mapped'    
+    
+    #instantiate OneHotEncoder
+    encoder = OneHotEncoder(sparse=False) 
+    # fit and transform the column
+    encoded = encoder.fit_transform(df[[tmp_var]])
+
+    # get the column names
+    column_names=[]
+    for i in sorted(df[tmp_var].unique()):
+        column_names.append('Employment_{}'.format(i))
+
+    encoded_df = pd.DataFrame(encoded, columns=column_names)
+
+    # reset indexes for both df and encoded df  
+    df = df.reset_index(drop=True)
+    encoded_df = encoded_df.reset_index(drop=True)
+    merged_df = df.join(encoded_df, how='left')
+
+    # drop the tmp_var column
+    df=merged_df.copy()
+    df.drop(tmp_var, axis=1, inplace=True)
+    df.drop(emp_col_name, axis=1, inplace=True)
+    return df 
+
 
 
 def parental_country_of_birth(df, father_col_name, mother_col_name, new_col_name):
@@ -189,6 +228,7 @@ train_data = drop_children_from_df(train_data, 'AAGE', 'Age')
 train_data = binarise_sex(train_data, 'ASEX', 'Male')
 train_data = apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_white', race_mapping_dict)
 train_data = apply_education_mapping_and_drop_education_col(train_data, 'AHGA', education_mapping)
+train_data = apply_employment_mapping_and_drop_employment_col(train_data, 'ACLSWKR', employment_mapping)
 train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Parents_birth')
 
 
