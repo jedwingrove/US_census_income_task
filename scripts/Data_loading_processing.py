@@ -57,6 +57,9 @@ def drop_children_from_df(df, age_col_name):
     df=df[df[age_col_name] > 14] 
     return df 
 
+def binarise_sex(df, sex_col_name):
+    df['Male'] = np.where(df[sex_col_name] == ' Male', 1, 0)
+    df.drop(sex_col_name, axis=1, inplace=True)
 
 
 
@@ -64,6 +67,8 @@ train_data = load_data(train_data_path)
 train_data=add_column_names_convert_target(train_data,column_names, cols_to_remove)
 train_data=drop_duplicates_and_conflicting_samples(train_data)
 train_data=drop_children_from_df(train_data, 'AAGE')
+train_data=drop_children_from_df(train_data, 'ASEX')
+
 
 print(train_data.head(3))
 print(len(train_data))
