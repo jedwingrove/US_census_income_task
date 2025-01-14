@@ -59,14 +59,15 @@ employment_mapping = {
     ' Without pay': 'Not in paid employment'
 }
 
-household_mapping = {'Not householder': 'Other relative of householder', 
-        'Householder':' Householder', 
-        'Not householder':' Spouse of householder',
-        'Not householder':' Nonrelative of householder', 
-        'Child':' Child under 18 never married',
-       'Child':' Group Quarters- Secondary individual',
-       'Child':' Child under 18 ever married',
-       'Child':' Child 18 or older'
+household_mapping = {
+     ' Other relative of householder': 'Not householder', 
+        ' Householder': 'Householder', 
+        ' Spouse of householder':'Not householder' ,
+        ' Nonrelative of householder':'Not householder', 
+        ' Child under 18 never married': 'Child',
+       ' Group Quarters- Secondary individual': 'Child',
+       ' Child under 18 ever married': 'Child',
+       ' Child 18 or older': 'Child'
 }
 
 cols_to_drop = ['AREORGN', 'ACLSWKR', 'ADTIND', 'ADTOCC', 'AHRSPAY', 'AMJIND', 'AMJOCC', 'AWKSTAT',
