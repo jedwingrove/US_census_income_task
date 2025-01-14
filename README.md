@@ -30,7 +30,7 @@ Family and Household Information (Marital Status, Family Size, etc.)
 
 
 ## Objectives
-To identify characteristics that are associated with a person making more or less than $50,000 per year income![image](https://github.com/user-attachments/assets/f6dd4a3a-cde2-42f3-9543-dc2494e056e1)
+To identify characteristics that are associated with a person making more or less than $50,000 per year income.
 
 
 
