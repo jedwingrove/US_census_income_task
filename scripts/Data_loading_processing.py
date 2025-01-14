@@ -59,8 +59,18 @@ employment_mapping = {
     ' Without pay': 'Not in paid employment'
 }
 
+household_mapping = {'Not householder': 'Other relative of householder', 
+        'Householder':' Householder', 
+        'Not householder':' Spouse of householder',
+        'Not householder':' Nonrelative of householder', 
+        'Child':' Child under 18 never married',
+       'Child':' Group Quarters- Secondary individual',
+       'Child':' Child under 18 ever married',
+       'Child':' Child 18 or older'
+}
+
 cols_to_drop = ['AREORGN', 'ACLSWKR', 'ADTIND', 'ADTOCC', 'AHRSPAY', 'AMJIND', 'AMJOCC', 'AWKSTAT',
-       'CAPGAIN', 'CAPLOSS', 'DIVVAL', 'FILESTAT', 'HHDFMX', 'HHDREL',
+       'CAPGAIN', 'CAPLOSS', 'DIVVAL', 'FILESTAT', 'HHDFMX', 
        'MIGMTR1', 'MIGMTR2', 'MIGMTR4', 'MIGSAME', 'MIGSUN', 'NOEMP',
        'PRCITSHP', 'SEOTR', 'VETYN', 'WKSWORK', 'YEAROFSUR','emp_mapped']
 
@@ -132,6 +142,35 @@ def apply_race_mapping_and_drop_race_col(df, race_col_name, race_new_col_name, r
     # drop original column and temp col, as not needed 
     df.drop(race_col_name, axis=1, inplace=True)
     df.drop('race_mapped', axis=1, inplace=True)
+
+    return df
+
+def apply_household_mapping_and_drop_household_col(df, hhld_col_name, hhld_mapping):
+    # apply new mapping of keywords using race_mapping dict
+    df['hhld_mapped'] = df[hhld_col_name].replace(hhld_mapping)
+    tmp_var='hhld_mapped'  
+    #instantiate OneHotEncoder
+    encoder = OneHotEncoder(sparse=False) 
+    # fit and transform the column
+    encoded = encoder.fit_transform(df[[tmp_var]])
+
+    # get the column names
+    column_names=[]
+    for i in sorted(df[tmp_var].unique()):
+        column_names.append('Household_{}'.format(i))
+
+    encoded_df = pd.DataFrame(encoded, columns=column_names)
+
+    # reset indexes for both df and encoded df  
+    df = df.reset_index(drop=True)
+    encoded_df = encoded_df.reset_index(drop=True)
+    merged_df = df.join(encoded_df, how='left')
+
+    # drop the tmp_var column
+    df=merged_df.copy()
+    df.drop(tmp_var, axis=1, inplace=True)
+    df.drop(hhld_col_name, axis=1, inplace=True)
+    return df 
 
     return df
 
@@ -289,6 +328,7 @@ train_data = binarise_marriage(train_data, 'AMARITL', 'Married')
 train_data = apply_race_mapping_and_drop_race_col(train_data, 'ARACE', 'Race_white', race_mapping_dict)
 train_data = apply_education_mapping_and_drop_education_col(train_data, 'AHGA', education_mapping)
 train_data = apply_employment_mapping_and_drop_employment_col(train_data, 'ACLSWKR', employment_mapping)
+train_data = apply_household_mapping_and_drop_household_col(train_data, 'HHDREL', household_mapping)
 
 train_data = parental_country_of_birth(train_data, 'PEFNTVTY', 'PEMNTVTY', 'Parents_birth')
 
