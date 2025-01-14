@@ -4,11 +4,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
 
+""" 
+
+This is a script which can be run to conduct all the necessary data cleaning and processing 
+    for the US census data task.
+
+    train_data_path needs to be changed according to your file location
+    
+    """
+
+
 train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn.csv'
 train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn_ready_for_modelling.csv'
 
-# train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test.csv'
-# train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test_ready_for_modelling.csv'
+# test_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test.csv'
+# test_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test_ready_for_modelling.csv'
 
 
 column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL','AMARITL',
