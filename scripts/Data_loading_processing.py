@@ -7,8 +7,8 @@ from sklearn.preprocessing import OneHotEncoder
 train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn.csv'
 train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_learn_ready_for_modelling.csv'
 
-train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test.csv'
-train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test_ready_for_modelling.csv'
+# train_data_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test.csv'
+# train_data_cleaned_path='/Users/jed/Documents/JED/Dataiku/drive-download-20250106T224222Z-001/census_income_test_ready_for_modelling.csv'
 
 
 column_names=['AAGE','ACLSWKR','ADTIND','ADTOCC','AGI','AHGA','AHRSPAY','AHSCOL','AMARITL',
