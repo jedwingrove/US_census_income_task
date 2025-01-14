@@ -35,7 +35,7 @@ To identify characteristics that are associated with a person making more or les
 
 
 ## Main Insights
-From conducting EDA on the data, I have found a good number of features which look important in differentiating between high earners and low earners. 
+Referring to the WIP.ipynb in notebooks: conducting EDA on the data, I have found a good number of features which look important in differentiating between high earners and low earners. 
 Sligtly older, middle aged, male, white, well educated, employed. 
 
 Use the Data_loading_processing.py script in scripts to complete data cleaning and feature engineering, changing the file path in file as needed. 
